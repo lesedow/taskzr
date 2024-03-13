@@ -1,6 +1,6 @@
 module.exports = {
 	root: 'src',
-	base: '/',
+	base: '/taskzr',
 	build: {
 		outDir: '../dist'
 	}
