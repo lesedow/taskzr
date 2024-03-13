@@ -1,0 +1,83 @@
+@import url('https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&display=swap');
+/* General Styles */ 
+
+:root {
+	--slate-950: #020617;
+	--slate-100: #f1f5f9;
+	--slate-200: #e2e8f0;
+	--slate-50: #f8fafc;
+}
+
+*, *::before, *::after {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+body {
+	font-family: 'Raleway', sans-serif;
+}
+
+p, h1 {
+	color: var(--slate-950);;
+}
+
+h2 {
+	font-weight: 600;
+	font-size: 1rem;
+}
+
+hr {
+	border: 1px solid var(--slate-100);
+}
+
+.icon {
+	width: 25px;
+}
+
+.container {
+	display: grid;
+	min-height: 100vh;
+	grid-template-columns: 300px 1fr;
+}
+
+.sidebar {
+	background-color: var(--slate-50);
+	padding: 15px;
+	box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px;
+}
+
+.sidebar > div {
+	margin-top: 10px;
+}
+
+.title {
+	font-weight: bold;
+	font-family: 'Roboto Condensed', sans-serif;
+}
+
+.project {
+	padding: 40px;
+}
+
+.project-container {
+	width: 80%;
+	margin: auto;
+
+	animation: fadeIn ease 1s;
+	animation-iteration-count: 1;
+ 	animation-fill-mode: forwards;
+}
+
+.new-task {
+	
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}

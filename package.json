@@ -1,0 +1,17 @@
+{
+  "name": "taskzr",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --config vite.config.cjs",
+    "build": "vite build --config vite.config.cjs",
+    "preview": "vite preview --config vite.config.cjs"
+  },
+  "devDependencies": {
+    "vite": "^5.1.4"
+  },
+  "dependencies": {
+    "date-fns": "^3.4.0"
+  }
+}

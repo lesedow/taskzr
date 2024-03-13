@@ -1,0 +1,24 @@
+.button {
+	display: grid;
+	gap: 10px;
+	grid-template-columns: auto auto 1fr;
+	align-items: center;
+	cursor: pointer;
+	transition: background-color .2s;
+	padding: 8px 10px;
+	border-radius: 5px;
+}
+
+.button > p,
+.button > .icon {
+	pointer-events: none;
+}
+
+.button:hover {
+	background-color: var(--slate-200);
+}
+
+.total-tasks {
+	justify-self: end;
+	opacity: 0.5;
+}
