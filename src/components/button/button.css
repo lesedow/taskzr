@@ -6,12 +6,25 @@
 	cursor: pointer;
 	transition: background-color .2s;
 	padding: 8px 10px;
-	border-radius: 5px;
+	border-radius: 5px;;
+}
+
+.projects-header > .button {
+	padding: 0;
+	display: flex;
+	justify-content: center;
 }
 
 .button > p,
 .button > .icon {
 	pointer-events: none;
+}
+
+.button > .color {
+	width: 10px;
+	height: 10px;
+	background-color: red;
+	border-radius: 50%;
 }
 
 .button:hover {

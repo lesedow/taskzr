@@ -1,6 +1,6 @@
 import ID from './id.js';
 
-export default class Project {
+export class Project {
 	constructor(name, color = '') {
 		this.id = ID.withPrefix('project');
 		this.name = name;
@@ -8,7 +8,15 @@ export default class Project {
 		this.tasks = [];
 	}
 
-	addTask(task) {
+	// addTask(task) {
+	// 	this.tasks.push(task);
+	// }
+}
+
+export const ProjectMethods = () => {
+	function addTask(task) {
 		this.tasks.push(task);
 	}
+
+	return { addTask };
 }

@@ -1,4 +1,4 @@
-import Project from './project.js';
+import { Project, ProjectMethods } from './project.js';
 import Task from './task.js';
 import { format, isEqual } from 'date-fns'; 
 
@@ -14,13 +14,14 @@ export default class Storage {
 	}
 
 	static #createDefaultProject() {
-		const inbox = new Project('Inbox');
+		const inbox = Object.assign(new Project('Inbox'), ProjectMethods());
 		const today = format(Date.now(), 'MM/dd/yyyy'); 
 
 		const defaultTask = new Task('Your first task', 'This is your first task.', 4, today);
 
 		inbox.addTask(defaultTask);
 		Storage.addProject(inbox);
+		Storage.saveProjectsToStorage();
 	}
 
 	static loadProjectsFromStorage() {
@@ -29,8 +30,12 @@ export default class Storage {
 			Storage.#createDefaultProject();
 			return;
 		} 
+
+		Storage.projects = loadedProjects.map(project => {
+			return Object.assign(project, ProjectMethods());
+		});
 		
-		Storage.projects = loadedProjects;
+		Storage.saveProjectsToStorage();
 	}
 
 	static getTodayTasksCount() {
@@ -44,19 +49,23 @@ export default class Storage {
 		return counter;
 	}
 
+	static getProjectNumberOfTasks(id) {
+		return Storage.getProjectById(id).tasks.length;
+	}
+
 	static addTaskToProject(task, id) {
 		const targetProject = Storage.getProjectById(id);
+
 		targetProject.addTask(task);
 		Storage.saveProjectsToStorage();
 	}
 
 	static saveProjectsToStorage() {
-		localStorage.setItem('project', JSON.stringify(Storage.projects));
+		localStorage.setItem('projects', JSON.stringify(Storage.projects));
 	}
 
 	static addProject(project) {
 		Storage.projects.push(project);
-		Storage.saveProjectsToStorage();
 	}
 
 	static getProjectById(id) {
