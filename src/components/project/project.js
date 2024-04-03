@@ -11,9 +11,15 @@ export function ProjectContent(project) {
 
 	project.tasks.forEach(task => {
 		const taskElementHTML = `
-			<p>${task.title}</p>
-			<p>${task.description}</p>
-			<hr>
+			<div class="priority-color"></div>
+			<div class="task-details">
+				<p class="task-title">${task.title}</p>
+				<p class="task-description">${task.description}</p>
+				<p class="task-date">${task.dueDate}<p>
+			</div>
+			<div class="task-complete">
+				<input type="checkbox">
+			</div>
 		`;
 
 		const taskElement = document.createElement('div');

@@ -87,6 +87,14 @@ export default class UI {
 		UI.#currentActivePanel = newTaskPanel;
 	}
 
+	static showAddProjectPanel(event) {
+		event.stopPropagation();
+		const newProjectPanel = NewProjectPanel(UI.onAddProjectSubmit);
+		document.body.appendChild(newProjectPanel);
+
+		UI.#currentActivePanel = newProjectPanel;
+	}
+
 	static displayProject(event) {
 		const targetID = event.target.getAttribute('data-id');
 		if (!targetID) return;
@@ -99,12 +107,12 @@ export default class UI {
 
 	static updateInboxButtonTaskCount(button) {
 		const inboxProject = Storage.getProjectById(button.getAttribute('data-id'));
-		button.lastElementChild.textContent = inboxProject.tasks.length;
+		button.lastElementChild.textContent = inboxProject.tasks.length || "";
 	} 
 
 	static updateTodayTaskCounter() {
 		const todayTaskCounter = document.querySelector('[data-id="today"]').lastElementChild;
-		todayTaskCounter.textContent = Storage.getTodayTasksCount();
+		todayTaskCounter.textContent = Storage.getTodayTasksCount() || "";
 	}
 
 	static createTodayButton() {

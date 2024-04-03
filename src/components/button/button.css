@@ -28,7 +28,7 @@
 }
 
 .button:hover {
-	background-color: var(--slate-200);
+	background-color: var(--slate-900);
 }
 
 .total-tasks {

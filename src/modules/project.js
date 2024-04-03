@@ -1,16 +1,11 @@
 import ID from './id.js';
 
 export class Project {
-	constructor(name, color = '') {
+	constructor(name) {
 		this.id = ID.withPrefix('project');
 		this.name = name;
-		this.color = color;
 		this.tasks = [];
 	}
-
-	// addTask(task) {
-	// 	this.tasks.push(task);
-	// }
 }
 
 export const ProjectMethods = () => {
