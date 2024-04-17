@@ -19,12 +19,24 @@ export function Button(icon, func, text = '') {
 	return button;
 }
 
-export function ProjectButton(icon, func, title, dataID = '') {
+export function TypeButton(icon, func, title, dataType) {
+	const button = Button(icon, func, title);
+	button.setAttribute('data-type', dataType);
+
+	const totalTasks = document.createElement('p');
+	totalTasks.classList.add('total-tasks');
+
+	button.appendChild(totalTasks);
+
+	return button;
+}
+
+export function ProjectButton(icon, func, title, dataID) {
 	const button = Button(icon, func, title);
 
-	if (dataID) {
-		button.setAttribute("data-id", dataID);
-	}
+	// if (dataID) {
+	button.setAttribute("data-id", dataID);
+	// }
 
 	const totalTasks = document.createElement('p');
 	totalTasks.classList.add('total-tasks');
