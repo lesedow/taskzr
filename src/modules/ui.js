@@ -69,28 +69,28 @@ export default class UI {
 
 	}
 
+	static refreshProjectContent(data) {
+		if (data.projectID === UI.#currentlySelectedButton) {
+			UI.displayProject();
+			UI.updateProjectButton(UI.#currentlySelectedButton);
+		} else {
+			UI.updateProjectButton(data.projectID);
+		}
+	}
+
+	static refreshWeekContent(data) {
+		const today = format(Date.now(), 'yyyy-MM-dd');
+		if (data.date == today) {
+			UI.updateTodayTaskCounter();
+			if (UI.#currentlySelectedButton === 'today') {
+				UI.showTodayTasks();
+			}
+		}
+	}
+
 	static updateAfterNewTask(data) {
-		// If the current selected button is a project update the
-		// project button
-		const isProjectButton = UI.#currentlySelectedButton.startsWith('project');
-		
-		if (isProjectButton) {
-			
-			return;
-		} 
-
-
-		// If the current selected button is equal to the project id 
-		// refresh content and update project button
-
-		// If the current selected button is a project and is not 
-		// equal to project id, update that project button and 
-		// dont refresh the page
-
-		// If the current selected button is a today button, only update 
-		// the page and the button if the new task date is equal to today's date
-	
-	
+		UI.refreshProjectContent(data);
+		UI.refreshWeekContent(data);
 	}
 
 	static updateAfterNewProject() {
@@ -102,9 +102,9 @@ export default class UI {
 		UI.displayProject();
 	}
 
-	static updateCurrentProjectButton() {
-		const currentProjectButton = document.querySelector(`[data-id="${UI.#currentlySelectedButton}"]`);
-		currentProjectButton.lastElementChild.textContent = Storage.getProjectNumberOfTasks(UI.#currentlySelectedButton);
+	static updateProjectButton(id) {
+		const projectButton = document.querySelector(`[data-id="${id}"]`);
+		projectButton.lastElementChild.textContent = Storage.getProjectNumberOfTasks(id);
 	}
 
 	static onNewTaskSubmit(event) {
@@ -137,6 +137,11 @@ export default class UI {
 
 		UI.showEditTaskPanel(event, taskID, taskProjectID);
 		
+	}
+
+	static onProjectButtonClick(event) {
+		UI.#currentlySelectedButton = event.target.getAttribute('data-id');
+		UI.displayProject();
 	}
 
 	static showNewTaskPanel(event) {
@@ -196,7 +201,7 @@ export default class UI {
 
 	static createInboxButton() {
 		const inboxID = Storage.projects[0].id; // First project is always the inbox 
-		const inboxButton = ProjectButton(InboxIcon, UI.displayProject, 'Inbox', inboxID);
+		const inboxButton = ProjectButton(InboxIcon, UI.onProjectButtonClick, 'Inbox', inboxID);
 		UI.#mainSection.appendChild(inboxButton);
 		UI.updateInboxButtonTaskCount(inboxButton);
 	}
