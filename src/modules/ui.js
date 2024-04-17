@@ -5,7 +5,7 @@ import '../style.css';
 import { Project } from './project.js';
 import Task from './task.js';
 import Storage from './storage.js';
-import { format } from "date-fns";
+import { format, isEqual } from "date-fns";
 
 // Icons 
 import CalendarTodayIcon from '../assets/calendar-today.svg';
@@ -15,9 +15,9 @@ import CalendarWeekIcon from '../assets/calendar-week.svg';
 import InboxIcon from '../assets/inbox.svg';
 
 // Components
-import { Button, ProjectButton } from '../components/button/button.js';
-import { ProjectContent } from '../components/project/project.js';
-import { NewTaskPanel, NewProjectPanel } from '../components/panel/panel.js';
+import { Button, ProjectButton, TypeButton } from '../components/button/button.js';
+import { ProjectContent } from '../components/project/projectContent.js';
+import { NewTaskPanel, EditTaskPanel, NewProjectPanel, EditProjectPanel } from '../components/panel/panel.js';
 
 export default class UI {
 	
@@ -28,14 +28,26 @@ export default class UI {
 	static #projectHeader = document.getElementById('projects-header');
 
 	static #currentActivePanel = null;
+	static #currentlySelectedButton;
 
 	static test() {
 		console.log('test')
 	}
 
-
 	static showTodayTasks() {
 		// Show today tasks
+		const todayTasks = {
+			name: 'Today',
+			tasks: Storage.getTodayTasks()
+		};
+
+		const projectContent = ProjectContent(todayTasks, UI.onTaskClicked);
+		UI.#projectContainer.replaceChildren(projectContent);
+	}
+
+	static onTodayButtonClicked() {
+		UI.#currentlySelectedButton = 'today';
+		UI.showTodayTasks();
 	}
 
 	static showWeekTasks() {
@@ -53,30 +65,78 @@ export default class UI {
 		});
 	}
 
-	static updateCurrentProjectButton(id) {
-		const currentProjectButton = document.querySelector(`[data-id="${id}"]`);
-		currentProjectButton.lastElementChild.textContent = Storage.getProjectNumberOfTasks(id);
+	static updateAfterTaskEdit() {
+
+	}
+
+	static updateAfterNewTask(data) {
+		// If the current selected button is a project update the
+		// project button
+		const isProjectButton = UI.#currentlySelectedButton.startsWith('project');
+		
+		if (isProjectButton) {
+			
+			return;
+		} 
+
+
+		// If the current selected button is equal to the project id 
+		// refresh content and update project button
+
+		// If the current selected button is a project and is not 
+		// equal to project id, update that project button and 
+		// dont refresh the page
+
+		// If the current selected button is a today button, only update 
+		// the page and the button if the new task date is equal to today's date
+	
+	
+	}
+
+	static updateAfterNewProject() {
+
+	}
+
+	static loadInboxTasks() {
+		UI.#currentlySelectedButton = Storage.projects[0].id; // Inbox
+		UI.displayProject();
+	}
+
+	static updateCurrentProjectButton() {
+		const currentProjectButton = document.querySelector(`[data-id="${UI.#currentlySelectedButton}"]`);
+		currentProjectButton.lastElementChild.textContent = Storage.getProjectNumberOfTasks(UI.#currentlySelectedButton);
 	}
 
 	static onNewTaskSubmit(event) {
 		event.preventDefault();
 		
-		const [ title, description, date, priority, project ] = event.target;
-		const formattedDate = format(date.value, 'MM/dd/yyy');
-		
-		const newTask = new Task(
-			title.value, 
-			description.value, 
-			priority.value, 
-			formattedDate
-		);
+		const formData = new FormData(event.target);
+		const formProps = Object.fromEntries(formData);
 
-		Storage.addTaskToProject(newTask, project.value);
-		UI.updateTodayTaskCounter();	
-		UI.updateCurrentProjectButton(project.value);
+		Storage.createNewTask(formProps);
+		UI.updateAfterNewTask(formProps);
 
 		document.body.removeChild(event.target.parentElement.parentElement);
 		UI.#currentActivePanel = null;
+	}
+
+	static onEditTaskSubmit(event) {
+
+	}
+
+	static onTaskClicked(event) {
+		const isCheckButton = event.target.hasAttribute("data-complete");
+
+		if (isCheckButton) {
+			console.log("check button clicked")
+			return;
+		}
+
+		const taskID = this.getAttribute('data-id');
+		const taskProjectID = this.getAttribute('data-project');
+
+		UI.showEditTaskPanel(event, taskID, taskProjectID);
+		
 	}
 
 	static showNewTaskPanel(event) {
@@ -85,6 +145,17 @@ export default class UI {
 		document.body.appendChild(newTaskPanel);
 
 		UI.#currentActivePanel = newTaskPanel;
+	}
+
+	static showEditTaskPanel(event, taskID, taskProjectID) {
+		event.stopPropagation();
+
+		const task = Storage.getTaskById(taskProjectID, taskID);
+		const editTaskPanel = EditTaskPanel(Storage.projects, task, UI.onEditTaskSubmit, UI.test);
+		
+		document.body.appendChild(editTaskPanel);
+
+		UI.#currentActivePanel = editTaskPanel;
 	}
 
 	static showAddProjectPanel(event) {
@@ -96,11 +167,12 @@ export default class UI {
 	}
 
 	static displayProject(event) {
-		const targetID = event.target.getAttribute('data-id');
+		let targetID = event ? event.target.getAttribute('data-id') : UI.#currentlySelectedButton;
+
 		if (!targetID) return;
 
 		const project = Storage.getProjectById(targetID);
-		const projectContent = ProjectContent(project);
+		const projectContent = ProjectContent(project, UI.onTaskClicked);
 
 		UI.#projectContainer.replaceChildren(projectContent);
   }
@@ -111,26 +183,26 @@ export default class UI {
 	} 
 
 	static updateTodayTaskCounter() {
-		const todayTaskCounter = document.querySelector('[data-id="today"]').lastElementChild;
+		const todayTaskCounter = document.querySelector('[data-type="today"]').lastElementChild;
 		todayTaskCounter.textContent = Storage.getTodayTasksCount() || "";
 	}
 
 	static createTodayButton() {
-		const todayTasks = ProjectButton(CalendarTodayIcon, UI.showTodayTasks, 'Today', 'today');
+		const todayTasks = TypeButton(CalendarTodayIcon, UI.onTodayButtonClicked, 'Today', 'today');
 		UI.#mainSection.appendChild(todayTasks);
 
 		UI.updateTodayTaskCounter();
 	}
 
 	static createInboxButton() {
-		const inboxID = Storage.projects[0].id; 
+		const inboxID = Storage.projects[0].id; // First project is always the inbox 
 		const inboxButton = ProjectButton(InboxIcon, UI.displayProject, 'Inbox', inboxID);
 		UI.#mainSection.appendChild(inboxButton);
 		UI.updateInboxButtonTaskCount(inboxButton);
 	}
 
 	static createUpcomingButton() {
-		const upcomingTasks = ProjectButton(CalendarWeekIcon, UI.test, 'Upcoming');
+		const upcomingTasks = TypeButton(CalendarWeekIcon, UI.test, 'Upcoming');
 		UI.#mainSection.appendChild(upcomingTasks);
 	}
 
@@ -156,5 +228,6 @@ export default class UI {
 		Storage.loadProjectsFromStorage();
 		UI.createButtons();
 		UI.bindOutsideClickEvent();
+		UI.loadInboxTasks();
 	}
 }
