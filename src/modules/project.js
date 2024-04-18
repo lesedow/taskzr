@@ -13,5 +13,13 @@ export const ProjectMethods = () => {
 		this.tasks.push(task);
 	}
 
-	return { addTask };
+	function editTaskAtIndex(index, newTask) {
+		this.tasks[index] =	newTask;
+	}	
+
+	function removeTaskAtIndex(index) {
+		this.tasks.splice(index, 1);
+	}
+
+	return { addTask, editTaskAtIndex, removeTaskAtIndex };
 }
