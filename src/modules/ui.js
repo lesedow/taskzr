@@ -88,11 +88,6 @@ export default class UI {
 		}
 	}
 
-	static updateAfterNewTask(data) {
-		UI.refreshProjectContent(data);
-		UI.refreshWeekContent(data);
-	}
-
 	static updateAfterNewProject() {
 
 	}
@@ -114,7 +109,9 @@ export default class UI {
 		const formProps = Object.fromEntries(formData);
 
 		Storage.createNewTask(formProps);
-		UI.updateAfterNewTask(formProps);
+
+		UI.refreshProjectContent(formProps);
+		UI.refreshWeekContent(formProps);
 
 		document.body.removeChild(event.target.parentElement.parentElement);
 		UI.#currentActivePanel = null;
