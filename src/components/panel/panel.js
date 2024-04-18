@@ -106,6 +106,8 @@ export function EditTaskPanel(projects, task, onSubmit, onRemove) {
 	const editTaskForm = document.createElement('form');
 	editTaskForm.action = '#';
 	editTaskForm.setAttribute('id', 'task-form');
+	editTaskForm.setAttribute('data-id', task.id);
+	editTaskForm.setAttribute('data-project', task.projectID);
 	editTaskContainer.appendChild(editTaskForm);
 
 	const details = Details(projects, task);
