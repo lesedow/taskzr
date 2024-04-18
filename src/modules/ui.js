@@ -65,31 +65,26 @@ export default class UI {
 		});
 	}
 
-	static updateAfterTaskEdit() {
-
-	}
-
 	static refreshProjectContent(data) {
 		if (data.projectID === UI.#currentlySelectedButton) {
 			UI.displayProject();
+		}
+
+		UI.updateProjectButton(data.projectID); // In case the task's project was edited
+		
+		if (UI.#currentlySelectedButton.startsWith('project')) {
 			UI.updateProjectButton(UI.#currentlySelectedButton);
-		} else {
-			UI.updateProjectButton(data.projectID);
 		}
 	}
 
 	static refreshWeekContent(data) {
 		const today = format(Date.now(), 'yyyy-MM-dd');
-		if (data.date == today) {
-			UI.updateTodayTaskCounter();
-			if (UI.#currentlySelectedButton === 'today') {
-				UI.showTodayTasks();
-			}
+		UI.updateTodayTaskCounter();
+		
+		if (UI.#currentlySelectedButton === 'today') {
+			UI.showTodayTasks();
 		}
-	}
-
-	static updateAfterNewProject() {
-
+	
 	}
 
 	static loadInboxTasks() {
@@ -136,6 +131,8 @@ export default class UI {
 
 		Storage.editTask(currentProjectID, taskID, formProps);
 
+		UI.refreshProjectContent(formProps);
+		UI.refreshWeekContent(formProps);
 		UI.removeCurrentActivePanel(event);
 	}
 
