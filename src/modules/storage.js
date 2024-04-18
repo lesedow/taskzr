@@ -83,6 +83,13 @@ export default class Storage {
 		Storage.saveProjectsToStorage();
 	}
 
+	static toggleTaskCheck(taskID, projectID, status) {
+		const task = Storage.getTaskById(projectID, taskID);
+		task.completed = status;
+
+		Storage.saveProjectsToStorage();
+	}
+
 	static createNewTask(properties) {
 		const newTask = new Task(properties);
 		Storage.addTaskToProject(newTask, properties.projectID);
