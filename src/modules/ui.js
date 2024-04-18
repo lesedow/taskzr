@@ -112,13 +112,31 @@ export default class UI {
 
 		UI.refreshProjectContent(formProps);
 		UI.refreshWeekContent(formProps);
+		UI.removeCurrentActivePanel(event);
+	}
 
+	static removeCurrentActivePanel(event) {
 		document.body.removeChild(event.target.parentElement.parentElement);
 		UI.#currentActivePanel = null;
 	}
 
-	static onEditTaskSubmit(event) {
+	static addPanelToPage(panel) {
+		document.body.appendChild(panel);
+		UI.#currentActivePanel = panel;
+	}
 
+	static onEditTaskSubmit(event) {
+		event.preventDefault();
+
+		const formData = new FormData(event.target);
+		const formProps = Object.fromEntries(formData);
+
+		const taskID = event.target.getAttribute('data-id');
+		const currentProjectID = event.target.getAttribute('data-project');
+
+		Storage.editTask(currentProjectID, taskID, formProps);
+
+		UI.removeCurrentActivePanel(event);
 	}
 
 	static onTaskClicked(event) {
@@ -133,7 +151,7 @@ export default class UI {
 		const taskProjectID = this.getAttribute('data-project');
 
 		UI.showEditTaskPanel(event, taskID, taskProjectID);
-		
+
 	}
 
 	static onProjectButtonClick(event) {
@@ -144,9 +162,8 @@ export default class UI {
 	static showNewTaskPanel(event) {
 		event.stopPropagation();
 		const newTaskPanel = NewTaskPanel(Storage.projects, UI.onNewTaskSubmit);
-		document.body.appendChild(newTaskPanel);
-
-		UI.#currentActivePanel = newTaskPanel;
+		
+		UI.addPanelToPage(newTaskPanel);
 	}
 
 	static showEditTaskPanel(event, taskID, taskProjectID) {
@@ -154,10 +171,8 @@ export default class UI {
 
 		const task = Storage.getTaskById(taskProjectID, taskID);
 		const editTaskPanel = EditTaskPanel(Storage.projects, task, UI.onEditTaskSubmit, UI.test);
-		
-		document.body.appendChild(editTaskPanel);
 
-		UI.#currentActivePanel = editTaskPanel;
+		UI.addPanelToPage(editTaskPanel);
 	}
 
 	static showAddProjectPanel(event) {
