@@ -138,14 +138,15 @@ export default class UI {
 
 	static onTaskClicked(event) {
 		const isCheckButton = event.target.hasAttribute("data-complete");
-
-		if (isCheckButton) {
-			console.log("check button clicked")
-			return;
-		}
-
 		const taskID = this.getAttribute('data-id');
 		const taskProjectID = this.getAttribute('data-project');
+
+		if (isCheckButton) {
+			const checkStatus = event.target.checked;
+			Storage.toggleTaskCheck(taskID, taskProjectID, checkStatus);
+
+			return;
+		}
 
 		UI.showEditTaskPanel(event, taskID, taskProjectID);
 
