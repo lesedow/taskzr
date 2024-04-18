@@ -65,18 +65,20 @@ export default class Storage {
 		return Storage.getProjectById(id).tasks.length;
 	}
 
-	static editTask(projectId, taskId, properties) {
-		let project = Storage.getProjectById(projectId);
-		let taskIndex = Storage.getTaskIndexById(project, taskId);
+	static editTask(currentProjectID, taskID, properties) {
+		let currentProject = Storage.getProjectById(currentProjectID);
+		let taskIndex = Storage.getTaskIndexById(currentProject, taskID);
 
-		let editedTask = new Task(...properties, taskId);
-		project[taskIndex] = editedTask;
-		
-		// task.title = title || task.title;
-		// task.description = description || task.description;
-		// task.priority = priority || task.priority;
-		// task.dueDate = dueDate || task.dueDate;
-		// task.title = completed || task.completed;
+		let editedTask = new Task(properties, taskID);
+
+		if (properties.projectID === currentProjectID) {
+			currentProject.editTaskAtIndex(taskIndex, editedTask);
+		} else {
+			const selectedProject = Storage.getProjectById(properties.projectID);
+			currentProject.removeTaskAtIndex(taskIndex);
+			selectedProject.addTask(editedTask);	
+		}
+
 
 		Storage.saveProjectsToStorage();
 	}
@@ -87,7 +89,7 @@ export default class Storage {
 	}
 
 	static getTaskIndexById(project, taskId) {
-		return project.findIndex((task) => task.id === taskId);
+		return project.tasks.findIndex((task) => task.id === taskId);
 	}
 
 	static getTaskById(projectId, taskId) {
