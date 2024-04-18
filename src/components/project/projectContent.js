@@ -30,12 +30,13 @@ function TaskDetails(task) {
 	return taskDetails;
 }
 
-function TaskCheckbox() {
+function TaskCheckbox(status) {
 	const container = document.createElement('div');
 	container.classList.add('task-complete');
 
 	const checkbox = document.createElement('input');
 	checkbox.type = 'checkbox';
+	checkbox.checked = status;
 	checkbox.dataset.complete = '';
 
 	container.appendChild(checkbox);
@@ -53,7 +54,7 @@ function Task(task, onTaskClicked) {
 	priorityColor.classList.add('priority-color');
 
 	const taskDetails = TaskDetails(task);
-	const taskCheck = TaskCheckbox();
+	const taskCheck = TaskCheckbox(task.completed);
 
 	taskElement.appendChild(priorityColor);
 	taskElement.appendChild(taskDetails);
